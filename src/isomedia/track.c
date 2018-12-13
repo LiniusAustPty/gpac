@@ -697,11 +697,17 @@ GF_Err MergeTrack(GF_TrackBox *trak, GF_TrackFragmentBox *traf, u64 moof_offset,
 			if (!senc && trak->sample_encryption)
 				senc = trak->sample_encryption;
 
+int sencflag = 0x2;
+if (trak->Media->information->InfoHeader && trak->Media->information->InfoHeader->type == GF_ISOM_BOX_TYPE_SMHD)
+{
+GF_LOG(GF_LOG_ERROR, GF_LOG_CONTAINER, ( " rajneesh -- sound flag = 0 \n"));
+sencflag = 0;
+}
 			if (!senc) {
 				if (traf->sample_encryption->is_piff) {
-					senc = (GF_SampleEncryptionBox *)gf_isom_create_piff_psec_box(1, 0x2, 0, 0, NULL);
+					senc = (GF_SampleEncryptionBox *)gf_isom_create_piff_psec_box(0, sencflag, 0, 0, NULL);
 				} else {
-					senc = gf_isom_create_samp_enc_box(1, 0x2);
+					senc = gf_isom_create_samp_enc_box(0, sencflag);
 				}
 
 				if (!trak->Media->information->sampleTable->other_boxes) trak->Media->information->sampleTable->other_boxes = gf_list_new();
